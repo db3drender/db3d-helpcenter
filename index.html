@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB3D 學員支援中心</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#111112;--s1:#1c1c1f;--s2:#242428;
+  --b1:#2a2a2e;--b2:#38383e;
+  --t1:#f0ede8;--t2:#c4bdb4;--muted:#555;
+  --acc:#e07030;--acc2:#c85f22;
+  --sketchup:#5a8fd4;--enscape:#e07030;--d5:#9b7fd4;--course:#4caf7d;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;font-size:15px;line-height:1.7;min-height:100vh;}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:8px;padding:0 20px;height:52px;background:rgba(17,17,18,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--b1);}
+.nav-logo{text-decoration:none;margin-right:auto;}
+.nav-brand{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--acc);display:block;}
+.nav-sub{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-top:-2px;}
+.nav-a{text-decoration:none;color:var(--muted);font-size:12px;padding:5px 12px;border:1px solid var(--b2);border-radius:20px;transition:all .2s;white-space:nowrap;}
+.nav-a:hover{color:var(--t1);border-color:var(--acc);}
+.nav-ig{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--b2);color:var(--muted);text-decoration:none;transition:all .2s;flex-shrink:0;}
+.nav-ig:hover{color:var(--acc);border-color:var(--acc);}
+.nav-ig svg{width:15px;height:15px;}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:52px 20px 28px;background:linear-gradient(180deg,rgba(224,112,48,.07) 0%,transparent 100%);border-bottom:1px solid var(--b1);}
+.hero-eye{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--acc);margin-bottom:12px;}
+.hero h1{font-size:clamp(24px,5vw,44px);font-weight:900;line-height:1.15;background:linear-gradient(135deg,#f0ede8 0%,#a89880 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
+.hero-sub{color:var(--muted);font-size:13px;margin-bottom:24px;}
+
+/* ── SEARCH (main focus) ── */
+.search-wrap{max-width:640px;margin:0 auto 18px;}
+.search-box{display:flex;align-items:stretch;background:var(--s2);border:1.5px solid var(--b2);border-radius:14px;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
+.search-box:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(224,112,48,.12);}
+.search-box select{flex-shrink:0;background:var(--s2);border:none;border-right:1px solid var(--b2);padding:14px 8px 14px 14px;color:var(--t2);font-family:'Noto Sans TC',sans-serif;font-size:13px;outline:none;cursor:pointer;appearance:none;min-width:110px;}
+.search-box input{flex:1;background:transparent;border:none;padding:14px 14px;color:var(--t1);font-family:'Noto Sans TC',sans-serif;font-size:15px;outline:none;}
+.search-box input::placeholder{color:var(--muted);}
+.search-icon{display:flex;align-items:center;padding:0 14px 0 0;color:var(--muted);}
+.search-icon svg{width:16px;height:16px;}
+
+/* ── COMPACT LINKS ── */
+.hero-links{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+.hero-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;text-decoration:none;border:1px solid var(--b2);color:var(--t2);transition:all .2s;white-space:nowrap;}
+.hero-link.ai{border-color:rgba(155,127,212,.35);color:#c4aee8;}
+.hero-link.ai:hover{background:rgba(155,127,212,.1);border-color:#9b7fd4;transform:translateY(-1px);box-shadow:0 3px 10px rgba(155,127,212,.2);}
+.hero-link.forum{border-color:rgba(76,175,125,.35);color:#7cd4a8;}
+.hero-link.forum:hover{background:rgba(76,175,125,.1);border-color:#4caf7d;transform:translateY(-1px);box-shadow:0 3px 10px rgba(76,175,125,.2);}
+
+/* ── PAGE ── */
+.page{max-width:860px;margin:0 auto;padding:26px 20px 100px;}
+
+/* ── PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
+.pill{padding:6px 15px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--b2);background:var(--s1);color:var(--muted);transition:all .2s;font-family:'Noto Sans TC',sans-serif;}
+.pill:hover{border-color:var(--acc);color:var(--t1);}
+.pill.active{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;}
+
+/* ── CAT GROUP ── */
+.cat-group{margin-bottom:34px;}
+.cat-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--b1);}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cat-name{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted);}
+
+/* ── COURSE BTN ── */
+.course-btn{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:11px 16px;background:linear-gradient(135deg,rgba(224,112,48,.09),rgba(224,112,48,.03));border:1px solid rgba(224,112,48,.28);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .22s;}
+.course-btn:hover{background:linear-gradient(135deg,rgba(224,112,48,.17),rgba(224,112,48,.07));border-color:var(--acc);color:var(--t1);transform:translateY(-1px);box-shadow:0 4px 14px rgba(224,112,48,.14);}
+.cb-icon{font-size:17px;flex-shrink:0;}
+.cb-body{flex:1;min-width:0;}
+.cb-title{font-weight:700;color:var(--t1);font-size:13px;display:block;}
+.cb-sub{font-size:11px;color:var(--muted);display:block;margin-top:1px;}
+.cb-arr{color:var(--acc);font-size:15px;flex-shrink:0;transition:transform .2s;}
+.course-btn:hover .cb-arr{transform:translateX(3px);}
+
+/* ── FAQ ── */
+.faq-item{background:var(--s1);border:1px solid var(--b1);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;overflow:hidden;}
+.faq-item:hover{border-color:var(--b2);}
+.faq-item.open{border-color:var(--acc);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-weight:500;font-size:14px;gap:12px;}
+.tog{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--acc);transition:transform .25s;border:1px solid var(--b2);}
+.faq-item.open .tog{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.faq-item.open .faq-a{max-height:9999px;}
+.faq-a-inner{padding:0 18px 18px;font-size:13.5px;line-height:1.85;color:var(--t2);border-top:1px solid var(--b1);}
+.faq-a-inner strong{color:var(--t1);}
+.faq-a-inner a{color:var(--acc);text-decoration:none;}
+.faq-a-inner a:hover{text-decoration:underline;}
+.faq-a-inner img{max-width:100%;border-radius:8px;margin:12px 0;border:1px solid var(--b1);display:block;}
+.faq-a-inner iframe{max-width:100%;border-radius:8px;margin:12px 0;border:none;display:block;}
+mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0 2px;}
+
+/* ── NO RESULT / LOADING ── */
+.no-result{display:none;text-align:center;padding:80px 20px;}
+.no-result.show{display:block;}
+.nr-e{font-size:48px;margin-bottom:14px;}
+.nr-t{font-size:18px;font-weight:700;margin-bottom:8px;}
+.nr-s{color:var(--muted);font-size:14px;}
+.loading{text-align:center;padding:60px;color:var(--muted);}
+
+/* ── BACK TO TOP ── */
+#btt{position:fixed;bottom:26px;right:22px;z-index:90;width:44px;height:44px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--t2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s,background .2s,border-color .2s;pointer-events:none;}
+#btt.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+#btt:hover{background:var(--acc);border-color:var(--acc);color:#fff;}
+
+@media(max-width:600px){
+  .nav{padding:0 12px;}
+  .hero{padding:36px 14px 22px;}
+  .search-box select{min-width:86px;font-size:12px;}
+  .page{padding:18px 12px 80px;}
+  .faq-q{font-size:13px;padding:12px;}
+  .nav-a{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="https://www.db3drender.com" target="_blank" rel="noopener">
+    <span class="nav-brand">DB3D.RENDER</span>
+    <span class="nav-sub">學員支援中心</span>
+  </a>
+  <a class="nav-a" href="https://www.db3drender.com" target="_blank" rel="noopener">← 課程首頁</a>
+  <a class="nav-ig" href="https://www.instagram.com/db3d.render/" target="_blank" rel="noopener" title="@db3d.render">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  </a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eye">DB3D.RENDER SUPPORT</div>
+  <h1>學員支援中心</h1>
+  <p class="hero-sub">SketchUp・Enscape・D5 Render 常見問題整理</p>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <select id="selCat">
+        <option value="">🗂 全部分類</option>
+        <option value="SketchUp">⬡ SketchUp</option>
+        <option value="Enscape">✦ Enscape</option>
+        <option value="D5">◈ D5 Render</option>
+        <option value="課程">📋 課程問題</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="搜尋問題關鍵字…">
+      <div class="search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-links">
+    <a class="hero-link ai"
+       href="https://chatgpt.com/g/g-692417fc4b2081918f0fbce8b08e1596-dai-bi-chao-qiang-d5xuan-ran-zhu-shou-2026"
+       target="_blank" rel="noopener">🤖 帶筆超強 D5 AI 助手</a>
+    <a class="hero-link forum"
+       href="https://www.db3drender.com/groups"
+       target="_blank" rel="noopener">💬 課程論壇 900+ 學員</a>
+  </div>
+</section>
+
+<div class="page">
+  <div class="pills" id="pills">
+    <button class="pill active" data-cat="">全部</button>
+  </div>
+  <div id="faqList"><div class="loading">載入中…</div></div>
+  <div class="no-result" id="noResult">
+    <div class="nr-e">🤔</div>
+    <div class="nr-t">找不到相關問題</div>
+    <div class="nr-s">試試其他關鍵字，或點上方 AI 助手直接提問</div>
+  </div>
+</div>
+
+<a id="btt" href="#">↑</a>
+
+<script>
+const CAT_COLOR={'SketchUp 基礎操作':'#5a8fd4','Enscape 算圖':'#e07030','D5 Render':'#9b7fd4','課程購買與使用':'#4caf7d'};
+const COURSES={
+  D5:      {icon:'◈',title:'D5 超寫實室內外渲染課程',sub:'攝影質感 × 真實光照 × 擬真材質',url:'https://www.db3drender.com/d5'},
+  Enscape: {icon:'✦',title:'ENSCAPE 電影級室內渲染課程',sub:'極速渲染 × 電影場景 × 擬真材質',url:'https://www.db3drender.com/enclass'},
+  SketchUp:{icon:'⬡',title:'SketchUp 高效曲線建模課',sub:'曲線形體 × 高效建模 × 萬能外掛',url:'https://www.db3drender.com/skpclass'},
+};
+
+let DATA=[], cat='';
+
+async function init(){
+  try{
+    const r=await fetch('./faq.json?t='+Date.now());
+    DATA=await r.json();
+    buildPills();
+    render('','');
+  }catch(e){
+    document.getElementById('faqList').innerHTML='<div class="loading" style="color:#f55">載入失敗，請重新整理</div>';
+  }
+}
+
+function buildPills(){
+  const c=document.getElementById('pills');
+  c.innerHTML='<button class="pill active" data-cat="">全部</button>';
+  DATA.forEach(g=>{
+    const b=document.createElement('button');
+    b.className='pill'; b.dataset.cat=g.tag; b.textContent=g.category;
+    c.appendChild(b);
+  });
+}
+
+function render(kw,fc){
+  const list=document.getElementById('faqList');
+  const nr=document.getElementById('noResult');
+  let html='',n=0;
+  DATA.forEach(g=>{
+    if(fc&&g.tag!==fc)return;
+    const items=kw?g.items.filter(i=>i.q.includes(kw)||i.a.replace(/<[^>]*>/g,'').includes(kw)):g.items;
+    if(!items.length)return;
+    n+=items.length;
+    const hl=t=>kw?t.replace(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'),m=>`<mark>${m}</mark>`):t;
+    const col=CAT_COLOR[g.category]||'#888';
+    const cb=COURSES[g.tag];
+    html+=`<div class="cat-group"><div class="cat-hd"><div class="cat-dot" style="background:${col}"></div><div class="cat-name">${g.category}</div></div>`;
+    if(cb&&!kw)html+=`<a class="course-btn" href="${cb.url}" target="_blank" rel="noopener"><span class="cb-icon">${cb.icon}</span><span class="cb-body"><span class="cb-title">${cb.title}</span><span class="cb-sub">${cb.sub}</span></span><span class="cb-arr">→</span></a>`;
+    items.forEach(i=>{ html+=`<div class="faq-item"><div class="faq-q">${hl(i.q)}<span class="tog">+</span></div><div class="faq-a"><div class="faq-a-inner">${i.a}</div></div></div>`; });
+    html+='</div>';
+  });
+  list.innerHTML=html;
+  nr.classList.toggle('show',n===0&&!!(kw||fc));
+  list.querySelectorAll('.faq-item').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('open')));
+}
+
+function setCat(c){
+  cat=c;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active',p.dataset.cat===c));
+  document.getElementById('selCat').value=c;
+  render(document.getElementById('searchInput').value.trim(),c);
+}
+
+document.getElementById('pills').addEventListener('click',e=>{const b=e.target.closest('.pill');if(b)setCat(b.dataset.cat);});
+document.getElementById('searchInput').addEventListener('input',e=>render(e.target.value.trim(),cat));
+document.getElementById('selCat').addEventListener('change',e=>setCat(e.target.value));
+
+const btt=document.getElementById('btt');
+window.addEventListener('scroll',()=>btt.classList.toggle('show',scrollY>300),{passive:true});
+btt.addEventListener('click',e=>{e.preventDefault();scrollTo({top:0,behavior:'smooth'});});
+
+init();
+</script>
+</body>
+</html>

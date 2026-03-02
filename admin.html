@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB3D 管理後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0b0c;--s1:#111315;--s2:#1a1c20;--s3:#22252a;
+  --b1:#252830;--b2:#32363f;--b3:#464c5a;
+  --t1:#eeeae4;--t2:#9b98a0;--t3:#5a5860;
+  --acc:#e8722a;--acc2:#bf5a1c;--green:#3dba7a;--red:#e05252;--yellow:#e0b030;
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;min-height:100vh;font-size:14px;line-height:1.6;}
+button,input,textarea,select{font-family:inherit;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:999;}
+.login-box{width:360px;padding:40px;background:var(--s1);border:1px solid var(--b1);border-radius:16px;}
+.login-brand{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--acc);margin-bottom:28px;text-align:center;}
+.login-box h1{font-size:21px;font-weight:700;text-align:center;margin-bottom:4px;}
+.login-sub{color:var(--t3);font-size:12px;text-align:center;margin-bottom:28px;}
+.field label{display:block;font-size:11px;color:var(--t2);margin-bottom:5px;letter-spacing:.5px;}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:11px 14px;color:var(--t1);font-size:14px;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--acc);}
+.btn-login{width:100%;margin-top:18px;padding:12px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;}
+.btn-login:hover{background:var(--acc2);}
+.login-err{min-height:18px;margin-top:8px;text-align:center;font-size:12px;color:var(--red);}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:column;}
+#app.on{display:flex;}
+
+/* TOPBAR */
+.topbar{height:52px;padding:0 20px;flex-shrink:0;display:flex;align-items:center;gap:12px;background:var(--s1);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:50;}
+.topbar-brand{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--acc);margin-right:auto;}
+#saveStatus{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);transition:color .3s;}
+#saveStatus.saving{color:var(--yellow);}
+#saveStatus.ok{color:var(--green);}
+#saveStatus.err{color:var(--red);}
+.tb-btn{padding:5px 13px;border:1px solid var(--b2);border-radius:20px;background:transparent;color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;}
+.tb-btn:hover{border-color:var(--acc);color:var(--acc);}
+.tb-btn.danger:hover{border-color:var(--red);color:var(--red);}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;min-height:0;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:234px;flex-shrink:0;display:flex;flex-direction:column;background:var(--s1);border-right:1px solid var(--b1);overflow-y:auto;}
+.sb-label{padding:16px 12px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--t3);}
+.cat-btn{display:flex;align-items:center;justify-content:space-between;margin:2px 8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;border:none;background:transparent;color:var(--t2);font-size:13px;text-align:left;width:calc(100% - 16px);transition:all .2s;}
+.cat-btn:hover{background:var(--s2);color:var(--t1);}
+.cat-btn.active{background:var(--s2);border:1px solid var(--b2);color:var(--t1);}
+.cat-btn .cnt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);}
+.sb-add{margin:8px;padding:8px 10px;border:1px dashed var(--b2);border-radius:var(--r);background:transparent;color:var(--t3);font-size:13px;cursor:pointer;width:calc(100% - 16px);text-align:left;transition:all .2s;}
+.sb-add:hover{border-color:var(--acc);color:var(--acc);}
+.sb-footer{margin-top:auto;padding:12px;}
+.preview-link{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--b1);border-radius:var(--r);color:var(--t3);font-size:12px;text-decoration:none;transition:all .2s;}
+.preview-link:hover{border-color:var(--acc);color:var(--acc);}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:26px;}
+
+/* SETUP PANEL */
+.setup-panel{background:var(--s2);border:1px solid rgba(232,114,42,.25);border-radius:12px;padding:22px;margin-bottom:26px;}
+.setup-panel h3{font-size:14px;font-weight:700;color:var(--acc);margin-bottom:7px;}
+.setup-panel p{color:var(--t2);font-size:13px;line-height:1.7;margin-bottom:14px;}
+.setup-panel a{color:var(--acc);}
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.cfg-grid.one{grid-template-columns:1fr;}
+.cfg-field label{display:block;font-size:11px;color:var(--t2);margin-bottom:4px;}
+.cfg-field input{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:8px 11px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;}
+.cfg-field input:focus{border-color:var(--acc);}
+.btn-cfg{padding:8px 18px;background:var(--green);border:none;border-radius:var(--r);color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;}
+.btn-cfg:hover{background:#31a067;}
+
+/* CAT HEADER */
+.cat-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
+.cat-hd h2{font-size:18px;font-weight:700;}
+.btn-pub{display:flex;align-items:center;gap:7px;padding:9px 20px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-pub:hover{background:var(--acc2);box-shadow:0 4px 14px rgba(232,114,42,.25);}
+.btn-pub:active{transform:scale(.97);}
+.cat-meta{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--b1);flex-wrap:wrap;}
+.mf{display:flex;align-items:center;gap:7px;}
+.mf label{font-size:12px;color:var(--t2);white-space:nowrap;}
+.mf input{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:6px 11px;color:var(--t1);font-size:13px;outline:none;transition:border-color .2s;}
+.mf input:focus{border-color:var(--acc);}
+.btn-del-cat{margin-left:auto;padding:6px 13px;border:1px solid var(--b2);border-radius:var(--r);background:transparent;color:var(--t3);font-size:12px;cursor:pointer;transition:all .2s;}
+.btn-del-cat:hover{border-color:var(--red);color:var(--red);}
+
+/* FAQ CARDS */
+.faq-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.faq-card{background:var(--s1);border:1px solid var(--b1);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.faq-card:hover{border-color:var(--b2);}
+.faq-card.open{border-color:rgba(232,114,42,.4);}
+.card-top{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;}
+.drag{color:var(--t3);font-size:16px;cursor:grab;flex-shrink:0;line-height:1;}
+.card-qprev{flex:1;font-size:13px;font-weight:500;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.faq-card.open .card-qprev{color:var(--t1);}
+.card-acts{display:flex;gap:5px;flex-shrink:0;}
+.ic{width:27px;height:27px;border:none;border-radius:6px;background:var(--s2);color:var(--t2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ic:hover{background:var(--b2);color:var(--t1);}
+.ic.del:hover{background:rgba(224,82,82,.15);color:var(--red);}
+.card-body{display:none;padding:0 14px 14px;border-top:1px solid var(--b1);}
+.faq-card.open .card-body{display:block;}
+
+/* FORM */
+.form-row{margin-top:13px;}
+.form-row>.flabel{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--t3);margin-bottom:6px;}
+.form-row input,.form-row textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:9px 11px;color:var(--t1);font-size:13px;outline:none;line-height:1.7;transition:border-color .2s;}
+.form-row input:focus,.form-row textarea:focus{border-color:var(--acc);}
+.form-row textarea{resize:vertical;min-height:110px;font-size:12.5px;}
+
+/* RICH TOOLBAR */
+.toolbar{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+.tool-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--b2);border-radius:6px;background:var(--s2);color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tool-btn:hover{border-color:var(--acc);color:var(--acc);}
+.tool-btn.active{border-color:var(--acc);color:var(--acc);background:rgba(232,114,42,.08);}
+.tool-sep{width:1px;height:18px;background:var(--b2);flex-shrink:0;}
+
+/* TABS in editor */
+.editor-tabs{display:flex;gap:0;margin-top:10px;border-radius:var(--r) var(--r) 0 0;overflow:hidden;border:1px solid var(--b2);border-bottom:none;}
+.etab{padding:7px 14px;font-size:12px;cursor:pointer;border:none;background:var(--s2);color:var(--t3);transition:all .2s;flex:1;text-align:center;}
+.etab:not(:last-child){border-right:1px solid var(--b2);}
+.etab.active{background:var(--s3);color:var(--t1);font-weight:600;}
+.editor-pane{display:none;}
+.editor-pane.active{display:block;}
+
+/* PREVIEW */
+.preview-area{padding:14px;background:var(--bg);border:1px solid var(--b2);border-radius:0 0 var(--r) var(--r);font-size:13px;line-height:1.85;color:var(--t2);max-height:360px;overflow-y:auto;}
+.preview-area img{max-width:100%;border-radius:6px;margin:8px 0;border:1px solid var(--b1);display:block;}
+.preview-area iframe{max-width:100%;border-radius:6px;margin:8px 0;border:none;display:block;}
+.preview-area a{color:var(--acc);}
+.preview-area strong{color:var(--t1);}
+
+/* UPLOAD STATUS */
+.up-status{display:none;margin-top:6px;padding:6px 11px;background:var(--s2);border:1px solid var(--b1);border-radius:6px;font-size:12px;color:var(--yellow);}
+.up-status.on{display:block;}
+
+/* ADD FAQ */
+.btn-add-faq{width:100%;padding:11px;border:1px dashed var(--b2);border-radius:10px;background:transparent;color:var(--t3);font-size:13px;cursor:pointer;transition:all .2s;text-align:left;}
+.btn-add-faq:hover{border-color:var(--acc);color:var(--acc);}
+
+/* EMPTY */
+.empty{text-align:center;padding:80px 20px;color:var(--t3);}
+.ei{font-size:44px;margin-bottom:12px;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;}
+.overlay.on{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:26px;width:100%;max-width:400px;}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:7px;}
+.modal p{color:var(--t2);font-size:13px;line-height:1.6;margin-bottom:18px;}
+.modal input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 13px;color:var(--t1);font-size:13px;outline:none;margin-bottom:9px;transition:border-color .2s;}
+.modal input:focus{border-color:var(--acc);}
+.modal-btns{display:flex;gap:9px;justify-content:flex-end;margin-top:4px;}
+.btn{padding:8px 18px;border-radius:var(--r);border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn.ghost{background:var(--s2);color:var(--t2);}
+.btn.ghost:hover{background:var(--b2);}
+.btn.ok{background:var(--acc);color:#fff;}
+.btn.ok:hover{background:var(--acc2);}
+.btn.danger{background:var(--red);color:#fff;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:300;background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:11px 16px;font-size:13px;color:var(--t1);box-shadow:0 8px 28px rgba(0,0,0,.45);transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:9px;max-width:320px;pointer-events:none;}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.green{border-color:var(--green);}
+.toast.red{border-color:var(--red);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-brand">DB3D.RENDER</div>
+    <h1>管理員後台</h1>
+    <p class="login-sub">FAQ 內容管理系統</p>
+    <div class="field">
+      <label>密碼</label>
+      <input type="password" id="pwInput" placeholder="輸入管理員密碼">
+    </div>
+    <button class="btn-login" id="loginBtn">登入</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">DB3D ADMIN</div>
+    <span id="saveStatus" class="mono">就緒</span>
+    <a href="./index.html" target="_blank" class="tb-btn">預覽 ↗</a>
+    <button class="tb-btn danger" id="logoutBtn">登出</button>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sb-label">分類</div>
+      <div id="catList"></div>
+      <button class="sb-add" id="addCatBtn">＋ 新增分類</button>
+      <div class="sb-footer">
+        <a href="./index.html" target="_blank" class="preview-link">🌐 學員版網頁</a>
+      </div>
+    </div>
+    <div class="main" id="mainArea">
+      <div class="empty"><div class="ei">👈</div><p>選擇左側分類開始編輯</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: 新增分類 -->
+<div class="overlay" id="addCatOverlay">
+  <div class="modal">
+    <h3>新增分類</h3>
+    <p>填入分類名稱與標籤（標籤用於學員端篩選按鈕）</p>
+    <input id="ncName" placeholder="分類名稱，例如：SketchUp 進階技巧">
+    <input id="ncTag"  placeholder="標籤，例如：SketchUp">
+    <div class="modal-btns">
+      <button class="btn ghost" id="ncCancel">取消</button>
+      <button class="btn ok" id="ncConfirm">新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: 確認刪除 -->
+<div class="overlay" id="delOverlay">
+  <div class="modal">
+    <h3>確認刪除</h3>
+    <p id="delMsg"></p>
+    <div class="modal-btns">
+      <button class="btn ghost" id="delCancel">取消</button>
+      <button class="btn danger" id="delConfirm">確認刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<!-- Hidden file input -->
+<input type="file" id="imgFile" accept="image/*" style="display:none">
+
+<script>
+// ═══════════════════════════════════════
+const ADMIN_PASSWORD = 'DB3DADMIN2024';
+// ═══════════════════════════════════════
+
+let FAQ   = [];
+let catI  = -1;
+let openSet = new Set();
+let delCb   = null;
+let imgCb   = null;
+
+const ls    = k => localStorage.getItem(k)||'';
+const lsSet = (k,v) => localStorage.setItem(k,v);
+let GH_OWNER = ls('gh_owner'), GH_REPO = ls('gh_repo'), GH_TOKEN = ls('gh_token');
+const GH_FAQ = 'faq.json', GH_IMG = 'images';
+
+// ── LOGIN ──────────────────────────────
+document.getElementById('loginBtn').onclick = doLogin;
+document.getElementById('pwInput').onkeydown = e => { if(e.key==='Enter') doLogin(); };
+function doLogin(){
+  if(document.getElementById('pwInput').value === ADMIN_PASSWORD){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    loadFAQ();
+  } else {
+    document.getElementById('loginErr').textContent = '密碼錯誤';
+  }
+}
+document.getElementById('logoutBtn').onclick = () => {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('pwInput').value = '';
+};
+
+// ── LOAD ───────────────────────────────
+async function loadFAQ(){
+  setSt('載入中…','');
+  try{
+    const r = await fetch('./faq.json?t='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    FAQ = await r.json();
+    renderSidebar();
+    setSt('就緒','');
+  }catch(e){ setSt('讀取失敗','err'); toast('讀取失敗：'+e.message,'❌',true); }
+}
+
+// ── GITHUB ─────────────────────────────
+async function ghFetch(method, path, body){
+  const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/${path}`,{
+    method,
+    headers:{ Authorization:'token '+GH_TOKEN, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+    ...(body?{body:JSON.stringify(body)}:{})
+  });
+  const d = await r.json();
+  if(!r.ok) throw new Error(d.message||'HTTP '+r.status);
+  return d;
+}
+async function ghSHA(path){ try{ return (await ghFetch('GET','contents/'+path)).sha; }catch{ return null; } }
+const b64 = str => btoa(unescape(encodeURIComponent(str)));
+const b64bin = data => data; // already base64 from FileReader
+
+async function pushFAQ(){
+  const json = JSON.stringify(FAQ, null, 2);
+  const sha  = await ghSHA(GH_FAQ);
+  await ghFetch('PUT','contents/'+GH_FAQ,{
+    message:'Update FAQ '+new Date().toLocaleString('zh-TW'),
+    content: b64(json),
+    ...(sha?{sha}:{})
+  });
+}
+
+async function uploadImg(file){
+  const name = 'img_'+Date.now()+'.'+((file.name.split('.').pop()||'jpg').toLowerCase());
+  const path = GH_IMG+'/'+name;
+  const data = await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=e=>res(e.target.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
+  const sha = await ghSHA(path);
+  await ghFetch('PUT','contents/'+path,{ message:'Upload '+name, content:data, ...(sha?{sha}:{}) });
+  return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${path}`;
+}
+
+// ── SAVE & PUBLISH ─────────────────────
+async function publish(){
+  collectDOM();
+  if(!GH_TOKEN||!GH_OWNER||!GH_REPO){
+    const blob = new Blob([JSON.stringify(FAQ,null,2)],{type:'application/json'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='faq.json'; a.click();
+    toast('尚未設定 GitHub，已下載 faq.json（請手動上傳）','⚠',true);
+    return;
+  }
+  setSt('發布中…','saving');
+  try{ await pushFAQ(); setSt('✓ 已發布','ok'); toast('已推送，網站 30 秒內更新','✅'); setTimeout(()=>setSt('就緒',''),5000); }
+  catch(e){ setSt('失敗','err'); toast('推送失敗：'+e.message,'❌',true); }
+}
+
+// ── STATUS / TOAST ─────────────────────
+function setSt(msg,cls){ const el=document.getElementById('saveStatus'); el.textContent=msg; el.className='mono '+(cls||''); }
+let toastT;
+function toast(msg,icon,isErr=false){
+  const el=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=icon||'ℹ';
+  document.getElementById('toastMsg').textContent=msg;
+  el.className='toast on '+(isErr?'red':'green');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),isErr?6000:3200);
+}
+
+// ── SIDEBAR ────────────────────────────
+function renderSidebar(){
+  const list=document.getElementById('catList');
+  list.innerHTML='';
+  FAQ.forEach((cat,i)=>{
+    const btn=document.createElement('button');
+    btn.className='cat-btn'+(i===catI?' active':'');
+    btn.innerHTML=`<span>${cat.category}</span><span class="cnt">${cat.items.length}</span>`;
+    btn.onclick=()=>selectCat(i);
+    list.appendChild(btn);
+  });
+}
+function selectCat(i){ catI=i; openSet=new Set(); renderSidebar(); renderMain(); }
+
+// ── MAIN ───────────────────────────────
+function renderMain(){
+  const area=document.getElementById('mainArea');
+  if(catI<0||catI>=FAQ.length){ area.innerHTML='<div class="empty"><div class="ei">👈</div><p>選擇左側分類</p></div>'; return; }
+  const cat=FAQ[catI];
+  const needCfg=!GH_TOKEN||!GH_OWNER||!GH_REPO;
+
+  area.innerHTML=`
+    ${needCfg?setupHTML():''}
+    <div class="cat-hd">
+      <h2>${esc(cat.category)}</h2>
+      <button class="btn-pub" id="pubBtn">✓ 儲存並發布</button>
+    </div>
+    <div class="cat-meta">
+      <div class="mf"><label>分類名稱</label><input id="catName" value="${esc(cat.category)}" style="width:190px"></div>
+      <div class="mf"><label>標籤</label><input id="catTag" value="${esc(cat.tag)}" style="width:100px"></div>
+      <button class="btn-del-cat" id="delCatBtn">🗑 刪除分類</button>
+    </div>
+    <div class="faq-list" id="faqList"></div>
+    <button class="btn-add-faq" id="addFaqBtn">＋ 新增問答</button>`;
+
+  renderCards();
+  document.getElementById('pubBtn').onclick    = publish;
+  document.getElementById('catName').oninput   = e=>{ FAQ[catI].category=e.target.value; renderSidebar(); area.querySelector('.cat-hd h2').textContent=e.target.value; };
+  document.getElementById('catTag').oninput    = e=>FAQ[catI].tag=e.target.value;
+  document.getElementById('addFaqBtn').onclick = addFaq;
+  document.getElementById('delCatBtn').onclick = ()=>confirmDel(`確定刪除「${FAQ[catI].category}」及其 ${FAQ[catI].items.length} 則問答嗎？`,()=>{
+    FAQ.splice(catI,1); catI=Math.max(0,catI-1); renderSidebar();
+    if(FAQ.length) renderMain(); else area.innerHTML='<div class="empty"><div class="ei">👈</div><p>從左側新增分類</p></div>';
+  });
+  if(needCfg) document.getElementById('saveCfgBtn').onclick=saveGHConfig;
+}
+
+function setupHTML(){
+  return `<div class="setup-panel">
+    <h3>⚙ 設定 GitHub 自動發布</h3>
+    <p>設定後按「儲存並發布」直接更新線上網站。需要 Personal Access Token（<a href="https://github.com/settings/tokens/new?scopes=repo&description=db3d-admin" target="_blank">點此申請 →</a>，勾選 <strong>repo</strong>）</p>
+    <div class="cfg-grid">
+      <div class="cfg-field"><label>GitHub 帳號</label><input id="cfgOwner" value="${esc(GH_OWNER)}" placeholder="帳號"></div>
+      <div class="cfg-field"><label>Repo 名稱</label><input id="cfgRepo" value="${esc(GH_REPO)}" placeholder="db3d-helpcenter"></div>
+    </div>
+    <div class="cfg-grid one">
+      <div class="cfg-field"><label>Personal Access Token</label><input id="cfgToken" type="password" value="${esc(GH_TOKEN)}" placeholder="ghp_xxxxx"></div>
+    </div>
+    <button class="btn-cfg" id="saveCfgBtn">儲存設定</button>
+  </div>`;
+}
+
+function saveGHConfig(){
+  GH_OWNER=document.getElementById('cfgOwner').value.trim();
+  GH_REPO =document.getElementById('cfgRepo').value.trim();
+  GH_TOKEN=document.getElementById('cfgToken').value.trim();
+  lsSet('gh_owner',GH_OWNER); lsSet('gh_repo',GH_REPO); lsSet('gh_token',GH_TOKEN);
+  toast('GitHub 設定已儲存','✅'); renderMain();
+}
+
+// ── CARDS ──────────────────────────────
+function renderCards(){
+  const list=document.getElementById('faqList');
+  if(!list)return;
+  list.innerHTML='';
+  FAQ[catI].items.forEach((item,i)=>{
+    const isOpen=openSet.has(i);
+    const card=document.createElement('div');
+    card.className='faq-card'+(isOpen?' open':'');
+    card.dataset.i=i;
+
+    card.innerHTML=`
+      <div class="card-top">
+        <span class="drag">⠿</span>
+        <span class="card-qprev">${esc(item.q)||'（未填寫問題）'}</span>
+        <div class="card-acts">
+          <button class="ic tog-ic">${isOpen?'▲':'▼'}</button>
+          <button class="ic del del-ic">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <span class="flabel">問題 Q</span>
+          <input class="q-inp" value="${esc(item.q)}" placeholder="輸入問題…">
+        </div>
+        <div class="form-row">
+          <span class="flabel">答案 A</span>
+          <div class="toolbar" id="tb-${i}">
+            <button class="tool-btn btn-img-url" title="插入圖片（貼網址）">🖼 圖片網址</button>
+            <button class="tool-btn btn-img-up"  title="上傳圖片到 GitHub">⬆ 上傳圖片</button>
+            <div class="tool-sep"></div>
+            <button class="tool-btn btn-yt"      title="嵌入 YouTube 影片">▶ YouTube</button>
+            <button class="tool-btn btn-html"    title="插入自訂 HTML">＜/＞ HTML</button>
+            <div class="tool-sep"></div>
+            <button class="tool-btn btn-bold">𝐁 粗體</button>
+            <button class="tool-btn btn-link">🔗 連結</button>
+            <button class="tool-btn btn-br">↵ 換行</button>
+            <div class="tool-sep"></div>
+            <button class="tool-btn btn-prev">👁 預覽</button>
+          </div>
+          <div class="up-status" id="upst-${i}">上傳圖片中，請稍候…</div>
+          <div class="editor-tabs" id="etabs-${i}">
+            <div class="etab active" data-pane="edit">✏ 編輯</div>
+            <div class="etab" data-pane="preview">👁 預覽</div>
+          </div>
+          <div class="editor-pane active" id="epane-edit-${i}">
+            <textarea class="a-inp" style="border-radius:0 0 var(--r) var(--r);border-top:none;">${esc(item.a)}</textarea>
+          </div>
+          <div class="editor-pane" id="epane-preview-${i}">
+            <div class="preview-area" id="prev-${i}"></div>
+          </div>
+        </div>
+      </div>`;
+
+    // toggle card
+    const toggleFn=()=>{ collectDOM(); isOpen?openSet.delete(i):openSet.add(i); renderCards(); };
+    card.querySelector('.card-top').onclick=e=>{ if(!e.target.closest('.card-acts'))toggleFn(); };
+    card.querySelector('.tog-ic').onclick=e=>{ e.stopPropagation(); toggleFn(); };
+
+    // delete
+    card.querySelector('.del-ic').onclick=e=>{
+      e.stopPropagation();
+      confirmDel(`確定刪除「${item.q||'此問答'}」嗎？`,()=>{
+        collectDOM(); FAQ[catI].items.splice(i,1);
+        openSet=new Set([...openSet].filter(x=>x!==i).map(x=>x>i?x-1:x));
+        renderCards(); renderSidebar();
+      });
+    };
+
+    // q live preview
+    card.querySelector('.q-inp').oninput=e=>card.querySelector('.card-qprev').textContent=e.target.value||'（未填寫問題）';
+
+    if(isOpen){
+      const ta=card.querySelector('.a-inp');
+
+      // editor tabs (edit / preview)
+      card.querySelectorAll('.etab').forEach(tab=>{
+        tab.onclick=()=>{
+          card.querySelectorAll('.etab').forEach(t=>t.classList.remove('active'));
+          card.querySelectorAll('.editor-pane').forEach(p=>p.classList.remove('active'));
+          tab.classList.add('active');
+          const pane=document.getElementById('epane-'+tab.dataset.pane+'-'+i);
+          pane.classList.add('active');
+          if(tab.dataset.pane==='preview'){
+            document.getElementById('prev-'+i).innerHTML=ta.value;
+          }
+        };
+      });
+
+      // 🖼 圖片網址
+      card.querySelector('.btn-img-url').onclick=()=>{
+        const url=prompt('貼上圖片網址\n（Google Drive 共用連結 / Imgur / 任何公開圖片）：');
+        if(!url)return;
+        ins(ta,`\n<img src="${url}" alt="圖片" style="max-width:100%;border-radius:8px;margin:10px 0;">\n`);
+      };
+
+      // ⬆ 上傳圖片到 GitHub
+      card.querySelector('.btn-img-up').onclick=()=>{
+        if(!GH_TOKEN||!GH_OWNER||!GH_REPO){ toast('請先填寫上方 GitHub 設定','⚠',true); return; }
+        imgCb=async file=>{
+          const st=document.getElementById('upst-'+i);
+          st.classList.add('on');
+          try{
+            const url=await uploadImg(file);
+            ins(ta,`\n<img src="${url}" alt="圖片" style="max-width:100%;border-radius:8px;margin:10px 0;">\n`);
+            toast('圖片上傳成功','✅');
+          }catch(e){ toast('上傳失敗：'+e.message,'❌',true); }
+          finally{ st.classList.remove('on'); }
+        };
+        document.getElementById('imgFile').click();
+      };
+
+      // ▶ YouTube embed
+      card.querySelector('.btn-yt').onclick=()=>{
+        const raw=prompt('貼上 YouTube 網址\n（例如 https://www.youtube.com/watch?v=xxxxx 或 https://youtu.be/xxxxx）：');
+        if(!raw)return;
+        const match=raw.match(/(?:youtu\.be\/|v=|\/embed\/)([A-Za-z0-9_-]{11})/);
+        if(!match){ toast('無法識別 YouTube 網址，請確認格式','⚠',true); return; }
+        const vid=match[1];
+        ins(ta,`\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:10px 0;">\n  <iframe src="https://www.youtube.com/embed/${vid}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen loading="lazy"></iframe>\n</div>\n`);
+      };
+
+      // </> 自訂 HTML
+      card.querySelector('.btn-html').onclick=()=>{
+        const snippet=prompt('貼上任何 HTML 片段\n（例如嵌入碼、自訂區塊等）：');
+        if(!snippet)return;
+        ins(ta,'\n'+snippet+'\n');
+      };
+
+      // 粗體 / 連結 / 換行
+      card.querySelector('.btn-bold').onclick=()=>ins(ta,'<strong>粗體文字</strong>');
+      card.querySelector('.btn-br').onclick  =()=>ins(ta,'<br>');
+      card.querySelector('.btn-link').onclick=()=>{
+        const url=prompt('網址：'); if(!url)return;
+        const txt=prompt('顯示文字：')||url;
+        ins(ta,`<a href="${url}" target="_blank" rel="noopener">${txt}</a>`);
+      };
+
+      // 👁 預覽 (toggle)
+      card.querySelector('.btn-prev').onclick=()=>{
+        const editTab=card.querySelector('.etab[data-pane="edit"]');
+        const prevTab=card.querySelector('.etab[data-pane="preview"]');
+        const active=card.querySelector('.etab.active');
+        if(active===prevTab) editTab.click(); else prevTab.click();
+      };
+    }
+
+    list.appendChild(card);
+  });
+}
+
+// ── COLLECT ────────────────────────────
+function collectDOM(){
+  const list=document.getElementById('faqList');
+  if(!list)return;
+  list.querySelectorAll('.faq-card').forEach(card=>{
+    const i=parseInt(card.dataset.i);
+    if(FAQ[catI]?.items[i]!=null){
+      FAQ[catI].items[i].q=card.querySelector('.q-inp')?.value??'';
+      FAQ[catI].items[i].a=card.querySelector('.a-inp')?.value??'';
+    }
+  });
+}
+
+function addFaq(){
+  collectDOM();
+  FAQ[catI].items.push({q:'',a:''});
+  const ni=FAQ[catI].items.length-1;
+  openSet.add(ni); renderCards(); renderSidebar();
+  setTimeout(()=>document.querySelectorAll('.faq-card')[ni]?.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// ── IMAGE FILE INPUT ────────────────────
+document.getElementById('imgFile').onchange=async e=>{
+  const file=e.target.files[0]; e.target.value='';
+  if(file&&imgCb){ await imgCb(file); imgCb=null; }
+};
+
+// ── ADD CAT MODAL ───────────────────────
+document.getElementById('addCatBtn').onclick=()=>{
+  document.getElementById('ncName').value='';
+  document.getElementById('ncTag').value='';
+  document.getElementById('addCatOverlay').classList.add('on');
+  setTimeout(()=>document.getElementById('ncName').focus(),50);
+};
+document.getElementById('ncCancel').onclick =()=>document.getElementById('addCatOverlay').classList.remove('on');
+document.getElementById('ncConfirm').onclick=()=>{
+  const name=document.getElementById('ncName').value.trim();
+  const tag =document.getElementById('ncTag').value.trim();
+  if(!name)return;
+  FAQ.push({category:name,tag:tag||name,items:[]});
+  renderSidebar(); selectCat(FAQ.length-1);
+  document.getElementById('addCatOverlay').classList.remove('on');
+};
+
+// ── DELETE MODAL ────────────────────────
+function confirmDel(msg,cb){
+  document.getElementById('delMsg').textContent=msg;
+  delCb=cb;
+  document.getElementById('delOverlay').classList.add('on');
+}
+document.getElementById('delCancel').onclick =()=>{ document.getElementById('delOverlay').classList.remove('on'); delCb=null; };
+document.getElementById('delConfirm').onclick=()=>{ document.getElementById('delOverlay').classList.remove('on'); delCb?.(); delCb=null; };
+
+// close overlay on backdrop
+document.querySelectorAll('.overlay').forEach(o=>o.onclick=e=>{ if(e.target===o)o.classList.remove('on'); });
+
+// ── UTILS ───────────────────────────────
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ins(ta,text){ const s=ta.selectionStart,e=ta.selectionEnd; ta.value=ta.value.slice(0,s)+text+ta.value.slice(e); ta.selectionStart=ta.selectionEnd=s+text.length; ta.focus(); }
+</script>
+</body>
+</html>
