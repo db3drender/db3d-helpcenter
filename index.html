@@ -8,11 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#111112;--s1:#1c1c1f;--s2:#242428;
-  --b1:#2a2a2e;--b2:#38383e;
-  --t1:#f0ede8;--t2:#c4bdb4;--muted:#555;
-  --acc:#e07030;--acc2:#c85f22;
-  --sketchup:#5a8fd4;--enscape:#e07030;--d5:#9b7fd4;--course:#4caf7d;
+  --bg:#13120f;--s1:#1d1b16;--s2:#252218;
+  --b1:#2e2b22;--b2:#3d3929;
+  --t1:#f2ede6;--t2:#c8bfb0;--muted:#6b6355;
+  --acc:#c8783a;--acc2:#b06228;
+  --sketchup:#5a8fd4;--enscape:#c8783a;--d5:#9b7fd4;--course:#5aaa7d;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -30,10 +30,10 @@ body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;
 .nav-ig svg{width:15px;height:15px;}
 
 /* ── HERO ── */
-.hero{text-align:center;padding:52px 20px 28px;background:linear-gradient(180deg,rgba(224,112,48,.07) 0%,transparent 100%);border-bottom:1px solid var(--b1);}
+.hero{text-align:center;padding:52px 20px 28px;background:linear-gradient(180deg,rgba(180,120,60,.08) 0%,transparent 100%);border-bottom:1px solid var(--b1);}
 .hero-eye{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:3px;color:var(--acc);margin-bottom:12px;}
 .hero h1{font-size:clamp(22px,3.5vw,36px);font-weight:900;line-height:1.15;background:linear-gradient(135deg,#f0ede8 0%,#a89880 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
-.hero-sub{color:var(--muted);font-size:22.5px;margin-bottom:24px;}
+.hero-sub{display:none;}
 
 /* ── SEARCH (main focus) ── */
 .search-wrap{max-width:640px;margin:0 auto 18px;}
@@ -46,8 +46,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;
 .search-icon svg{width:16px;height:16px;}
 
 /* ── COMPACT LINKS ── */
-.hero-links{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
-.hero-link{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;font-size:21px;text-decoration:none;border:1px solid var(--b2);color:var(--t2);transition:all .2s;white-space:nowrap;}
+.hero-links{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:2px;}
+.hero-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;text-decoration:none;border:1px solid var(--b2);color:var(--t2);transition:all .2s;white-space:nowrap;}
 .hero-link.ai{border-color:rgba(155,127,212,.35);color:#c4aee8;}
 .hero-link.ai:hover{background:rgba(155,127,212,.1);border-color:#9b7fd4;transform:translateY(-1px);box-shadow:0 3px 10px rgba(155,127,212,.2);}
 .hero-link.forum{border-color:rgba(76,175,125,.35);color:#7cd4a8;}
@@ -69,12 +69,12 @@ body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;
 .cat-name{font-family:'Space Mono',monospace;font-size:19.5px;letter-spacing:2px;color:var(--muted);}
 
 /* ── COURSE BTN ── */
-.course-btn{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:14px 18px;border-radius:10px;text-decoration:none;color:var(--t2);transition:all .22s;}
+.course-btn{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(224,112,48,.18),rgba(224,112,48,.06));border:1px solid rgba(224,112,48,.5);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .22s;box-shadow:0 2px 12px rgba(224,112,48,.1);}
 .course-btn:hover{background:linear-gradient(135deg,rgba(224,112,48,.17),rgba(224,112,48,.07));border-color:var(--acc);color:var(--t1);transform:translateY(-1px);box-shadow:0 4px 14px rgba(224,112,48,.14);}
 .cb-icon{25.5px;flex-shrink:0;}
 .cb-body{flex:1;min-width:0;}
-.cb-title{font-weight:700;color:var(--t1);font-size:15px;display:block;}
-.cb-sub{font-size:13px;color:var(--muted);display:block;margin-top:2px;}
+.cb-title{font-weight:700;color:var(--t1);font-size:22.5px;display:block;}
+.cb-sub{19.5px;color:var(--muted);display:block;margin-top:2px;}
 .cb-arr{color:var(--acc);font-size:22.5px;flex-shrink:0;transition:transform .2s;}
 .course-btn:hover .cb-arr{transform:translateX(3px);}
 
@@ -112,42 +112,44 @@ mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0
 @media(max-width:768px){
   .nav{padding:0 16px;height:56px;}
   .hero{padding:44px 20px 26px;}
-  .search-box input{24px;}
+  .search-box input{font-size:15px;}
   .page{padding:22px 16px 100px;}
-  .faq-q{22.5px;padding:15px 16px;}
-  .faq-a-inner{22.5px;padding:0 16px 18px;}
-  .pill{21px;padding:7px 15px;}
-  .cb-title{21px;}
-  .cb-sub{18px;}
+  .faq-q{font-size:14px;padding:12px 16px;}
+  .faq-a-inner{font-size:14px;padding:0 16px 16px;}
+  .pill{font-size:12px;padding:5px 12px;}
+  .cb-title{font-size:14px;}
+  .cb-sub{font-size:12px;}
 }
 
 /* ── MOBILE (480px以下) ── */
 @media(max-width:480px){
   .nav{padding:0 12px;height:52px;}
   .nav-a{display:none;}
-  .hero{padding:36px 14px 22px;}
-  .hero h1{42px;}
-  .hero-sub{21px;}
+  .hero{padding:28px 14px 18px;}
+  .hero h1{font-size:26px;}
+  .hero-sub{display:none;}
   .search-box{border-radius:12px;}
-  .search-box select{min-width:90px;font-size:21px;padding:13px 6px 13px 12px;}
-  .search-box input{24px;padding:13px 10px;}
-  .hero-link{19.5px;padding:6px 12px;}
-  .page{padding:16px 12px 90px;}
-  .pills{gap:6px;}
-  .pill{19.5px;padding:6px 13px;}
-  .faq-q{21px;padding:14px 14px;line-height:1.5;}
-  .faq-a-inner{21.8px;padding:0 14px 16px;line-height:1.85;}
-  .cb-title{20.2px;}
-  .cb-sub{18px;}
-  .cb-icon{22.5px;}
-  #btt{width:40px;height:40px;font-size:24px;bottom:20px;right:16px;}
-  .tog{width:24px;height:24px;}
+  .search-box select{min-width:80px;font-size:13px;padding:10px 6px 10px 10px;}
+  .search-box input{font-size:13px;padding:10px;}
+  .hero-link{font-size:11px;padding:5px 10px;gap:4px;}
+  .page{padding:14px 10px 80px;}
+  .pills{gap:5px;}
+  .pill{font-size:11px;padding:5px 10px;}
+  .faq-q{font-size:13px;padding:12px 12px;line-height:1.5;}
+  .faq-a-inner{font-size:13px;padding:0 12px 14px;line-height:1.8;}
+  .cb-title{font-size:13px;}
+  .cb-sub{font-size:11px;}
+  .cb-icon{font-size:15px;}
+  #btt{width:36px;height:36px;font-size:18px;bottom:16px;right:12px;}
+  .tog{width:22px;height:22px;font-size:13px;}
 }
 
 /* ── SMALL MOBILE (360px以下) ── */
 @media(max-width:360px){
-  .search-box select{min-width:78px;font-size:19.5px;}
-  .hero-link{18px;padding:5px 10px;}
+  .search-box select{min-width:70px;font-size:12px;}
+  .hero-link{font-size:10px;padding:4px 8px;}
+  .pill{font-size:10px;padding:4px 8px;}
+  .faq-q{font-size:12px;}
 }
 </style>
 </head>
@@ -170,7 +172,6 @@ mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0
 <section class="hero">
   <div class="hero-eye">DB3D.RENDER SUPPORT</div>
   <h1>學員支援中心</h1>
-  <p class="hero-sub">SketchUp・Enscape・D5 Render 常見問題整理</p>
 
   <div class="search-wrap">
     <div class="search-box">
@@ -179,7 +180,7 @@ mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0
         <option value="SketchUp">⬡ SketchUp</option>
         <option value="Enscape">✦ Enscape</option>
         <option value="D5">◈ D5 Render</option>
-        <option value="課程">📋 課程問題</option>
+        <option value="課程">📋 課程相關問題</option>
       </select>
       <input type="text" id="searchInput" placeholder="搜尋問題關鍵字…">
       <div class="search-icon">
@@ -215,7 +216,7 @@ mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0
 <a id="btt" href="#">↑</a>
 
 <script>
-const CAT_COLOR={'SketchUp 基礎操作':'#5a8fd4','Enscape 算圖':'#e07030','D5 Render':'#9b7fd4','課程購買與使用':'#4caf7d','課程相關問題':'#4caf7d','課程問題':'#4caf7d'};
+const CAT_COLOR={'SketchUp 基礎操作':'#5a8fd4','Enscape 算圖':'#e07030','D5 Render':'#9b7fd4','課程購買與使用':'#4caf7d'};
 const COURSES={
   D5:      {icon:'◈',title:'D5 超寫實室內外渲染課程',sub:'攝影質感 × 真實光照 × 擬真材質',url:'https://www.db3drender.com/d5'},
   Enscape: {icon:'✦',title:'ENSCAPE 電影級室內渲染課程',sub:'極速渲染 × 電影場景 × 擬真材質',url:'https://www.db3drender.com/enclass'},
@@ -279,7 +280,7 @@ function render(kw,fc){
     const col=CAT_COLOR[g.category]||'#888';
     const cb=COURSES[g.tag];
     html+=`<div class="cat-group"><div class="cat-hd"><div class="cat-dot" style="background:${col}"></div><div class="cat-name">${g.category}</div></div>`;
-    if(cb&&!kw)html+=`<a class="course-btn" href="${cb.url}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,${col}30,${col}10);border:1px solid ${col}80;box-shadow:0 2px 10px ${col}25;"><span class="cb-icon">${cb.icon}</span><span class="cb-body"><span class="cb-title">${cb.title}</span><span class="cb-sub">${cb.sub}</span></span><span class="cb-arr" style="color:${col}">→</span></a>`;
+    if(cb&&!kw)html+=`<a class="course-btn" href="${cb.url}" target="_blank" rel="noopener"><span class="cb-icon">${cb.icon}</span><span class="cb-body"><span class="cb-title">${cb.title}</span><span class="cb-sub">${cb.sub}</span></span><span class="cb-arr">→</span></a>`;
     items.forEach(i=>{ html+=`<div class="faq-item"><div class="faq-q"><span class="faq-q-text">${hl(i.q)}</span><span class="tog">+</span></div><div class="faq-a"><div class="faq-a-inner">${i.a}</div></div></div>`; });
     html+='</div>';
   });
