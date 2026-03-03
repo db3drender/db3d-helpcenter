@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Noto Sans TC',sans-serif;
 .cat-name{font-family:'Space Mono',monospace;font-size:19.5px;letter-spacing:2px;color:var(--muted);}
 
 /* ── COURSE BTN ── */
-.course-btn{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:11px 16px;background:linear-gradient(135deg,rgba(224,112,48,.09),rgba(224,112,48,.03));border:1px solid rgba(224,112,48,.28);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .22s;}
+.course-btn{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(224,112,48,.18),rgba(224,112,48,.06));border:1px solid rgba(224,112,48,.5);border-radius:10px;text-decoration:none;color:var(--t2);transition:all .22s;box-shadow:0 2px 12px rgba(224,112,48,.1);}
 .course-btn:hover{background:linear-gradient(135deg,rgba(224,112,48,.17),rgba(224,112,48,.07));border-color:var(--acc);color:var(--t1);transform:translateY(-1px);box-shadow:0 4px 14px rgba(224,112,48,.14);}
 .cb-icon{25.5px;flex-shrink:0;}
 .cb-body{flex:1;min-width:0;}
@@ -179,7 +179,7 @@ mark{background:rgba(224,112,48,.2);color:var(--acc);border-radius:3px;padding:0
         <option value="SketchUp">⬡ SketchUp</option>
         <option value="Enscape">✦ Enscape</option>
         <option value="D5">◈ D5 Render</option>
-        <option value="課程">📋 課程問題</option>
+        <option value="課程">📋 課程相關問題</option>
       </select>
       <input type="text" id="searchInput" placeholder="搜尋問題關鍵字…">
       <div class="search-icon">
@@ -220,6 +220,7 @@ const COURSES={
   D5:      {icon:'◈',title:'D5 超寫實室內外渲染課程',sub:'攝影質感 × 真實光照 × 擬真材質',url:'https://www.db3drender.com/d5'},
   Enscape: {icon:'✦',title:'ENSCAPE 電影級室內渲染課程',sub:'極速渲染 × 電影場景 × 擬真材質',url:'https://www.db3drender.com/enclass'},
   SketchUp:{icon:'⬡',title:'SketchUp 高效曲線建模課',sub:'曲線形體 × 高效建模 × 萬能外掛',url:'https://www.db3drender.com/skpclass'},
+  課程:    {icon:'📋',title:'DB3D 全課程一覽',sub:'D5 渲染 × Enscape 算圖 × SketchUp 建模',url:'https://www.db3drender.com'},
 };
 
 let DATA=[], cat='';
