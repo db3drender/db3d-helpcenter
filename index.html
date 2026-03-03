@@ -319,9 +319,29 @@ body::before {
 }
 
 /* STEP BOX → light theme */
-/* STEP 標題橘色 */
+/* STEP / CHECK 標題橘色 */
 .faq-a-inner div[style*="font-weight:700"],
 .faq-a-inner div[style*="font-weight: 700"] { color: #E07030 !important; }
+
+/* 答案內按鈕統一配色 background:#B28E6E, text:#FCF7F0 */
+.faq-a-inner a[style*="background:#e07030"],
+.faq-a-inner a[style*="background: #e07030"] {
+  background: #B28E6E !important;
+  color: #FCF7F0 !important;
+  border-color: #B28E6E !important;
+}
+.faq-a-inner a[style*="background:#242424"],
+.faq-a-inner a[style*="background: #242424"],
+.faq-a-inner a[style*="background:#1a1a1a"],
+.faq-a-inner a[style*="background: #1a1a1a"] {
+  background: #B28E6E !important;
+  color: #FCF7F0 !important;
+  border-color: #9A7458 !important;
+}
+/* 按鈕裡的文字 span/icon 也換色 */
+.faq-a-inner a[style*="background:#e07030"] *,
+.faq-a-inner a[style*="background:#242424"] *,
+.faq-a-inner a[style*="background:#1a1a1a"] * { color: #FCF7F0 !important; }
 .faq-a-inner div[style*="background:#1e1e1e"] {
   background: rgba(220,208,192,.5) !important;
   border-color: var(--bd2) !important;
