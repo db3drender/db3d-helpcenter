@@ -442,19 +442,22 @@ async function publish(){
   }
   setSt('發布中…','saving');
   try{
-    // 發布前先從 GitHub 拉取最新版，防止覆蓋其他分類
+    // ── 用 GitHub Contents API（有 token 驗證，不受 CDN 快取影響）──
     try{
-      const rawUrl = 'https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/main/faq.json?t='+Date.now();
-      const r = await fetch(rawUrl);
-      if(r.ok){
-        const remote = await r.json();
+      const apiUrl = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/faq.json';
+      const apiR = await fetch(apiUrl,{headers:{Authorization:'token '+GH_TOKEN,Accept:'application/vnd.github.v3+json'}});
+      if(apiR.ok){
+        const apiData = await apiR.json();
+        const b64 = Array.from(apiData.content).filter(c=>c!=='\n'&&c!=='\r'&&c!==' ').join('');
+        const decoded = decodeURIComponent(escape(atob(b64)));
+        const remote = JSON.parse(decoded);
         const localCat = FAQ[catI];
-        const ri = remote.findIndex(g => g.tag === localCat.tag);
-        if(ri !== -1){ remote[ri] = localCat; } else { remote.push(localCat); }
+        const ri = remote.findIndex(g=>g.tag===localCat.tag);
+        if(ri!==-1){ remote[ri]=localCat; }else{ remote.push(localCat); }
         FAQ = remote;
         renderSidebar();
       }
-    }catch(_){}
+    }catch(fe){ console.warn('遠端拉取失敗，用本地推送',fe); }
     await pushFAQ();
     setSt('✓ 已發布','ok');
     toast('已推送，網站 30 秒內更新','✅');
