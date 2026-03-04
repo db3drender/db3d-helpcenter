@@ -291,7 +291,7 @@ body::before {
 .faq-q {
   display: flex; justify-content: space-between; align-items: flex-start;
   padding: 16px 12px; gap: 14px; cursor: pointer;
-  font-size: 22px; font-weight: 400; color: var(--t1);
+  font-size: 15px; font-weight: 400; color: var(--t1);
   transition: color .15s; line-height: 1.55;
 }
 .faq-q:hover .faq-q-text { color: var(--deep); }
@@ -408,6 +408,25 @@ body::before {
 /* ═══════════════════════════════════
    TABLET  768px
 ═══════════════════════════════════ */
+
+/* ── 桌機版答案卡內文放大 1.5× ── */
+.faq-a-inner div[style*="font-size:0.9em"],
+.faq-a-inner div[style*="font-size: 0.9em"] { font-size: 19px !important; }
+
+.faq-a-inner div[style*="font-size:0.95em"],
+.faq-a-inner div[style*="font-size: 0.95em"] { font-size: 20px !important; }
+
+.faq-a-inner div[style*="font-size:0.88em"],
+.faq-a-inner div[style*="font-size: 0.88em"] { font-size: 19px !important; }
+
+/* STEP 標籤（0.75em） */
+.faq-a-inner div[style*="font-size:0.75em"],
+.faq-a-inner div[style*="font-size: 0.75em"] { font-size: 13px !important; }
+
+/* 導言（直接用 font-size:0.95em 的 div） */
+.faq-a-inner > div[style*="font-size:0.95em"],
+.faq-a-inner > div[style*="font-size: 0.95em"] { font-size: 20px !important; }
+
 @media(max-width:768px){
   .nav   { height: 52px; }
   .hero  { padding: 32px 20px 28px; }
