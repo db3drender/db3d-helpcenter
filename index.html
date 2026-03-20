@@ -486,16 +486,15 @@ body::before {
   /* ── AI助手 + 論壇：同一行，各佔一半 ── */
   .hero-links {
     display: flex;
-    flex-direction: row;        /* 同一行 */
+    flex-direction: column;        /* 上下兩行 */
     gap: 10px;
     align-items: stretch;
-    flex-wrap: nowrap;
   }
   .hero-link {
-    flex: 1;                    /* 各佔一半 */
+    flex: 1;                    /* 各佔全寬 */
     justify-content: center;
-    font-size: 13px;
-    padding: 13px 10px;
+    font-size: 14px;
+    padding: 14px 12px;
     border-radius: 18px;
     gap: 7px;
     white-space: nowrap;
